@@ -25,4 +25,10 @@ public class SensorService implements ISensorService {
         return sensors.stream().map(sensor -> modelMapper
                 .map(sensor, SensorDto.class)).toList();
     }
+
+    @Override
+    public SensorDto addSensor(si.damjanh.sensorbackend.dto.request.SensorDto newSensor) {
+        Sensor savedSensor = sensorRepository.save(modelMapper.map(newSensor, Sensor.class));
+        return modelMapper.map(savedSensor, SensorDto.class);
+    }
 }

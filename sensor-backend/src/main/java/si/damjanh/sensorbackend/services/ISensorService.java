@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ISensorService {
     List<SensorDto> getSensors();
+
+    SensorDto addSensor(si.damjanh.sensorbackend.dto.request.SensorDto newSensor);
 }
