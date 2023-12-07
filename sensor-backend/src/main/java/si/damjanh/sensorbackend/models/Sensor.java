@@ -2,13 +2,17 @@ package si.damjanh.sensorbackend.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Entity
 public class Sensor {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name="description", length=50, nullable=false, unique=false)
+    @Column(name="description", nullable=false)
     private String description;
 
     @Column(name="position", nullable=false)
@@ -23,6 +27,9 @@ public class Sensor {
     @Column(name="status", nullable=false)
     private String status;
 
+    @OneToMany
+    @JoinColumn(name = "sensor_id")
+    private List<Measurement> measurements;
 
     public Sensor() {}
 
@@ -72,5 +79,26 @@ public class Sensor {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<Measurement> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(List<Measurement> measurements) {
+        this.measurements = measurements;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sensor sensor = (Sensor) o;
+        return type == sensor.type && Objects.equals(id, sensor.id) && Objects.equals(description, sensor.description) && Objects.equals(position, sensor.position) && Objects.equals(comments, sensor.comments) && Objects.equals(status, sensor.status) && Objects.equals(measurements, sensor.measurements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, position, comments, type, status, measurements);
     }
 }
