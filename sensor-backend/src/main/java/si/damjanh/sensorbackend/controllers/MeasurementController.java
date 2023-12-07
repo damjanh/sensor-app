@@ -11,6 +11,7 @@ import si.damjanh.sensorbackend.services.IMeasurementService;
 import java.text.ParseException;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class MeasurementController {
 
