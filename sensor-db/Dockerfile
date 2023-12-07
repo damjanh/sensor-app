@@ -1,0 +1,4 @@
+FROM postgres
+ENV POSTGRES_DB sensor-db
+ENV POSTGRES_USER user
+ENV POSTGRES_PASSWORD password
