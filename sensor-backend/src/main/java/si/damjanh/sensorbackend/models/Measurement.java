@@ -2,6 +2,7 @@ package si.damjanh.sensorbackend.models;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +13,8 @@ public class Measurement {
     private Long id;
 
     @Column(name = "stamp")
-    private String stamp;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date stamp;
 
     @Column(name = "type")
     private String type;
@@ -34,11 +36,11 @@ public class Measurement {
         this.id = id;
     }
 
-    public String getStamp() {
+    public Date getStamp() {
         return stamp;
     }
 
-    public void setStamp(String stamp) {
+    public void setStamp(Date stamp) {
         this.stamp = stamp;
     }
 

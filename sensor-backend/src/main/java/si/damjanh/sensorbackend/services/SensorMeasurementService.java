@@ -11,7 +11,9 @@ import si.damjanh.sensorbackend.models.Sensor;
 import si.damjanh.sensorbackend.repositories.MeasurementRepository;
 import si.damjanh.sensorbackend.repositories.SensorRepository;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +49,7 @@ public class SensorMeasurementService implements ISensorService, IMeasurementSer
         if (sensorFound.isPresent()) {
 
             Measurement measurement = new Measurement();
-            measurement.setStamp(newMeasurement.getStamp());
+            measurement.setStamp(Date.from(Instant.parse(newMeasurement.getStamp())));
             measurement.setType(newMeasurement.getType());
             measurement.setValue(newMeasurement.getValue());
             measurement.setSensor(sensorFound.get());
@@ -63,16 +65,36 @@ public class SensorMeasurementService implements ISensorService, IMeasurementSer
     }
 
     @Override
-    public List<MeasurementDto> getMeasurements(Long sensorId) {
-        Optional<Sensor> sensor = sensorRepository.findById(sensorId);
-        return sensor.map(value -> value.getMeasurements()
-                .stream()
-                .map(it -> {
-                    MeasurementDto dto = modelMapper.map(it, MeasurementDto.class);
-                    dto.setPosition(sensor.get().getPosition());
-                    return dto;
-                })
-                .toList())
-                .orElseGet(ArrayList::new);
+    public List<MeasurementDto> getMeasurements(Long sensorId, String from, String to) {
+        final Optional<Sensor> sensor = sensorRepository.findById(sensorId);
+
+        if (sensor.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        if (from != null && to != null) {
+            Instant tsFrom = Instant.parse(from);
+            Instant tsTo = Instant.parse(to);
+
+            return measurementRepository.findMeasurementsBySensorWithRange(
+                    sensorId,
+                    Date.from(tsFrom),
+                    Date.from(tsTo)
+            ).stream().map(it -> {
+                MeasurementDto dto = modelMapper.map(it, MeasurementDto.class);
+                dto.setPosition(sensor.get().getPosition());
+                return dto;
+            }).toList();
+        } else {
+            return sensor.map(value -> value.getMeasurements()
+                            .stream()
+                            .map(it -> {
+                                MeasurementDto dto = modelMapper.map(it, MeasurementDto.class);
+                                dto.setPosition(sensor.get().getPosition());
+                                return dto;
+                            })
+                            .toList())
+                    .orElseGet(ArrayList::new);
+        }
     }
 }
