@@ -11,7 +11,9 @@ import si.damjanh.sensorbackend.models.Sensor;
 import si.damjanh.sensorbackend.repositories.MeasurementRepository;
 import si.damjanh.sensorbackend.repositories.SensorRepository;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.Optional;
 
 @Service
 public class SensorMeasurementService implements ISensorService, IMeasurementService {
+
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     @Autowired
     private SensorRepository sensorRepository;
@@ -73,8 +77,8 @@ public class SensorMeasurementService implements ISensorService, IMeasurementSer
         }
 
         if (from != null && to != null) {
-            Instant tsFrom = Instant.parse(from);
-            Instant tsTo = Instant.parse(to);
+            Instant tsFrom = OffsetDateTime.parse(from).toInstant();
+            Instant tsTo = OffsetDateTime.parse(to).toInstant();
 
             return measurementRepository.findMeasurementsBySensorWithRange(
                     sensorId,
@@ -91,6 +95,7 @@ public class SensorMeasurementService implements ISensorService, IMeasurementSer
                             .map(it -> {
                                 MeasurementDto dto = modelMapper.map(it, MeasurementDto.class);
                                 dto.setPosition(sensor.get().getPosition());
+                                dto.setStamp(sdf.format(it.getStamp()));
                                 return dto;
                             })
                             .toList())
