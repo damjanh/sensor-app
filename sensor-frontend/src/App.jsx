@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NavBar from "./components/NavBar";
-import AddSensor from "./components/AddSensor";
 import Main from "./components/Main";
+import AddSensor from "./components/sensors/AddSensor";
 
 function App() {
 
